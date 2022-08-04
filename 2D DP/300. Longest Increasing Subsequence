@@ -1,0 +1,57 @@
+//Recursive Approach
+class Solution {
+public:
+    int solveRecurr(vector<int>& nums,int currInsertedIdx,int lastInsertedIdx)
+        //currentInsertedIdx-->jo element hum choose krne jaarhe hai, usko point krne wala pointer
+        //lastInsertedIdx-->jo element humare choosed vector me pada hai, usko point krne wala pointer
+    {
+        //Base Case-->jab pointer nums array ko cross krke end me pahuch jaye
+        if(currInsertedIdx==nums.size())
+        {
+            return 0;
+        }
+        int include=0;
+        if(lastInsertedIdx==-1 || nums[currInsertedIdx]>nums[lastInsertedIdx])
+        {
+            include=1+solveRecurr(nums,currInsertedIdx+1,currInsertedIdx);
+            //currentInsertedIdx wala badhega hi badhega ar lastInsertedIdx ab currentInsertedIdx bn jayega
+        }
+        int exclude=0+solveRecurr(nums,currInsertedIdx+1,lastInsertedIdx);
+        
+        return max(include,exclude);
+    }
+    int lengthOfLIS(vector<int>& nums)
+    {
+        return solveRecurr(nums,0,-1);
+    }
+};
+
+//Top Down Approach
+class Solution {
+public:
+    int solveMem(vector<int>& nums,int currInsertedIdx,int lastInsertedIdx,vector<vector<int>>&dp)
+      {
+        if(currInsertedIdx==nums.size())
+        {
+            return 0;
+        }
+        
+        if(dp[currInsertedIdx][lastInsertedIdx+1]!=-1)return dp[currInsertedIdx][lastInsertedIdx+1];
+        
+        int include=0;
+        if(lastInsertedIdx==-1 || nums[currInsertedIdx]>nums[lastInsertedIdx])
+        {
+            include=1+solveMem(nums,currInsertedIdx+1,currInsertedIdx,dp);
+        }
+        int exclude=0+solveMem(nums,currInsertedIdx+1,lastInsertedIdx,dp);
+        
+        dp[currInsertedIdx][lastInsertedIdx+1]= max(include,exclude);
+        return dp[currInsertedIdx][lastInsertedIdx+1];
+     }
+    int lengthOfLIS(vector<int>& nums)
+    {
+        int n=nums.size();
+        vector<vector<int>>dp(n,vector<int>(n+1,-1));
+        return solveMem(nums,0,-1,dp);
+    }
+};
